@@ -1,7 +1,0 @@
-start = { "#" }
-
-not_eol = { !NEWLINE ~ ANY }
-space = { " " }
-ident = { ( space | not_eol )+ }
-
-comment = { start ~ ident }
