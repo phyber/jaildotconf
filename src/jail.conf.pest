@@ -18,6 +18,13 @@ shell_comment = { "#" ~ any_not_eol* }
 // Values
 // allow.mount = true;
 // allow.mount = "true";
+// allow.mount = 'true';
+// "allow.mount" = true;
+// "allow.mount" = "true";
+// "allow.mount" = 'true';
+// 'allow.mount' = true;
+// 'allow.mount' = "true";
+// 'allow.mount' = 'true';
 // Escaped quotes within an already quoted string are currently rejected.
 param_name_base = { (!(whitespace | quotes | "+" | "=" | ";") ~ ANY)+ }
 param_name_double_quoted = { "\"" ~ (!"\"" ~ param_name_base)* ~ "\"" }
