@@ -1,24 +1,24 @@
-//
+// Helpers for other fragments.
 any_inc_eol = { NEWLINE | ANY }
 any_not_eol = { !NEWLINE ~ ANY }
 quotes = { "\"" | "\'" }
 whitespace = { " "+ | "\t"+ }
 
-// Comments
 // /*
 //  * C style /* comment */
 //  */
 c_comment = { "/*" ~ (c_comment | !"*/" ~ ANY)* ~ "*/" }
+
 // CPP style comment
-
 cpp_comment = { "//" ~ any_not_eol* }
-// # Shell style comment
 
+// # Shell style comment
 shell_comment = { "#" ~ any_not_eol* }
 
 // Values
 // allow.mount = true;
 // allow.mount = "true";
+// Escaped quotes within an already quoted string are currently rejected.
 param_name_base = { (!(whitespace | quotes | "+" | "=" | ";") ~ ANY)+ }
 param_name_double_quoted = { "\"" ~ (!"\"" ~ param_name_base)* ~ "\"" }
 param_name_single_quoted = { "\'" ~ (!"\'" ~ param_name_base)* ~ "\'" }
@@ -39,5 +39,4 @@ param_with_value = {
     ~ whitespace?
     ~ ";"
 }
-
 param_without_value = { param_name ~ whitespace? ~ ";" }
