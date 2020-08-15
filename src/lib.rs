@@ -8,6 +8,10 @@ pub struct JailDotConf;
 mod tests {
     use super::*;
     use indoc::indoc;
+    use pest::{
+        consumes_to,
+        parses_to,
+    };
     use pretty_assertions::assert_eq;
     use std::fs;
     use std::path::{
@@ -66,6 +70,20 @@ mod tests {
     }
 
     #[test]
+    fn test_shell_comment_z() {
+        let input = read_input("shell_comment.txt");
+
+        parses_to!{
+            parser: JailDotConf,
+            input:  &input,
+            rule:   Rule::shell_comment,
+            tokens: [
+                shell_comment(0, 20)
+            ]
+        }
+    }
+
+    #[test]
     fn test_shell_comment() {
         let input = read_input("shell_comment.txt");
 
@@ -82,16 +100,40 @@ mod tests {
 
     #[test]
     fn test_param_with_value() {
-        let input = "allow.mount = true;";
+        // (input, is_ok)
+        let tests = vec![
+            ("allow.mount = true;",         true),
+            ("allow.mount = \"true\";",     true),
+            ("allow.mount = 'true';",       true),
+            ("\"allow.mount\" = true;",     true),
+            ("\"allow.mount\" = \"true\";", true),
+            ("\"allow.mount\" = 'true';",   true),
+            // Lack of trailing semi colon
+            ("allow.mount = true",         false),
+            ("allow.mount = \"true\"",     false),
+            ("allow.mount = 'true'",       false),
+            ("\"allow.mount\" = true",     false),
+            ("\"allow.mount\" = \"true\"", false),
+            ("\"allow.mount\" = 'true'",   false),
+        ];
 
-        let parsed = JailDotConf::parse(Rule::param_with_value, &input)
-            .unwrap()
-            .next()
-            .unwrap()
-            .as_str();
+        for test in tests {
+            let (input, ok) = test;
+            let parsed = JailDotConf::parse(Rule::param_with_value, &input);
 
-        let expected = "allow.mount = true;";
+            if ok {
+                let parsed = parsed
+                    .unwrap()
+                    .next()
+                    .unwrap()
+                    .as_str();
 
-        assert_eq!(expected, parsed);
+                // Input should be the same as parsed.
+                assert_eq!(input, parsed);
+            }
+            else {
+                assert!(parsed.is_err());
+            }
+        }
     }
 }
