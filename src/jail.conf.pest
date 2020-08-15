@@ -1,8 +1,8 @@
 // Helpers for other fragments.
-any_inc_eol = { NEWLINE | ANY }
-any_not_eol = { !NEWLINE ~ ANY }
-quotes = { "\"" | "\'" }
-whitespace = { " "+ | "\t"+ }
+any_inc_eol = _{ NEWLINE | ANY }
+any_not_eol = _{ !NEWLINE ~ ANY }
+quotes = _{ "\"" | "\'" }
+whitespace = _{ " "+ | "\t"+ }
 
 // /*
 //  * C style /* comment */
@@ -26,16 +26,16 @@ shell_comment = { "#" ~ any_not_eol* }
 // 'allow.mount' = "true";
 // 'allow.mount' = 'true';
 // Escaped quotes within an already quoted string are currently rejected.
-param_name_base = { (!(whitespace | quotes | "+" | "=" | ";") ~ ANY)+ }
-param_name_double_quoted = { "\"" ~ (!"\"" ~ param_name_base)* ~ "\"" }
-param_name_single_quoted = { "\'" ~ (!"\'" ~ param_name_base)* ~ "\'" }
-param_name_unquoted = { !quotes ~ param_name_base }
+param_name_base = _{ (!(whitespace | quotes | "+" | "=" | ";") ~ ANY)+ }
+param_name_double_quoted = _{ "\"" ~ (!"\"" ~ param_name_base)* ~ "\"" }
+param_name_single_quoted = _{ "\'" ~ (!"\'" ~ param_name_base)* ~ "\'" }
+param_name_unquoted = _{ !quotes ~ param_name_base }
 param_name = { param_name_double_quoted | param_name_single_quoted | param_name_unquoted }
 param_additive = { "+"? }
 param_assignment = { param_additive ~ "=" }
-param_value_double_quoted = { "\"" ~ (!("\"" | ";") ~ ANY)* ~ "\"" }
-param_value_single_quoted = { "\'" ~ (!("\'" | ";") ~ ANY)* ~ "\'" }
-param_value_unquoted = { (!(whitespace | quotes | ";") ~ ANY)* }
+param_value_double_quoted = _{ "\"" ~ (!("\"" | ";") ~ ANY)* ~ "\"" }
+param_value_single_quoted = _{ "\'" ~ (!("\'" | ";") ~ ANY)* ~ "\'" }
+param_value_unquoted = _{ (!(whitespace | quotes | ";") ~ ANY)* }
 param_value = { param_value_double_quoted | param_value_single_quoted | param_value_unquoted }
 param_with_value = {
     param_name
